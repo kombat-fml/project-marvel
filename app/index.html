@@ -14,29 +14,31 @@
   <section class="actors">
     <div class="container">
       <div class="filters-wrapper">
-        <select name="heroName" id="heroName">
-          <option value="all">Все герои</option>
-        </select>
-        <select name="gender" id="gender">
-          <option value="all">Любой пол</option>
-        </select>
-        <select name="citizenshi" id="citizenshi">
-          <option value="all">Любое гражданство</option>
-        </select>
-        <select name="species" id="species">
-          <option value="all">Любая расса</option>
-        </select>
-        <select name="status" id="status">
-          <option value="all">Любой статус</option>
-        </select>
-        <select name="movie" id="movie">
-          <option value="all">Любой фильм</option>
-        </select>
+        <div class="selects">
+          <select name="name" id="name">
+            <option value="all">Все герои</option>
+          </select>
+          <select name="gender" id="gender">
+            <option value="all">Любой пол</option>
+          </select>
+          <select name="citizenship" id="citizenship">
+            <option value="all">Любое гражданство</option>
+          </select>
+          <select name="species" id="species">
+            <option value="all">Любая раса</option>
+          </select>
+          <select name="status" id="status">
+            <option value="all">Любой статус</option>
+          </select>
+          <select name="movies" id="movies">
+            <option value="all">Любой фильм</option>
+          </select>
+        </div>
         <input type="text" id="inputText" placeholder="Начните ввод">
+        <button id="reset">Сбросить фильтры</button>
       </div>
       <!-- /.filters-wrapper -->
       <div class="cards-wrapper">
-
       </div>
       <!-- /.cards-wrapper -->
     </div>
