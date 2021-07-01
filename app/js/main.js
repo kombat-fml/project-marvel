@@ -4,40 +4,51 @@ const jsonUrl = './dbHeroes.json';
 
 class MarvelData {
   constructor() {
+    // текущие данные
     this.currentData = [];
+    // полные данные
     this.fullData = [];
+    // установленные фильтры
     this.filters = {
       name: 'all',
       gender: 'all',
       citizenship: 'all',
       species: 'all',
       status: 'all',
-      movie: 'all',
+      movies: 'all',
     }
+    // **** возможный функционал для сортировки по фильтрам
     this.orders = {
       name: 'none',
       gender: 'none',
       citizenship: 'none',
       species: 'none',
       status: 'none',
-      movie: 'none',
+      movies: 'none',
     }
-    this.name = new Set();
-    this.gender = new Set();
-    this.citizenship = new Set();
-    this.status = new Set();
-    this.movies = new Set();
-    this.species = new Set();
+    // коллекции уникальных значений полей для заполнения фильтров
+    this.selects = {
+      name: new Set(),
+      gender: new Set(),
+      citizenship: new Set(),
+      status: new Set(),
+      movies: new Set(),
+      species: new Set(),
+    }
+    // коллекции значений фильтров после применения фильтров
+    this.currentSelects = {
+      name: new Set(),
+      gender: new Set(),
+      citizenship: new Set(),
+      status: new Set(),
+      movies: new Set(),
+      species: new Set(),
+    }
   }
-
+  // обнуляем установленные фильтры
   wipeFilters() {
-    this.filters = {
-      name: 'all',
-      gender: 'all',
-      citizenship: 'all',
-      species: 'all',
-      status: 'all',
-      movie: 'all',
+    for (let key in this.filters) {
+      this.filters[key] = 'all';
     }
   }
 
@@ -48,43 +59,58 @@ class MarvelData {
   request() {
     fetch(jsonUrl)
       .then(response => response.json())
-      .then(result => this.addData(result));
+      .then(result => this.start(result));
   }
 
-  addData(data) {
+  start(data) {
     this.fullData = data;
     this.wipeData();
-    this.processingData();
     this.renderCards();
-    this.fillSelects();
+    this.processingData(this.currentData, this.selects);
+    this.wipeAndFillCurrentSelects();
+    this.fillSelects(this.currentSelects);
     this.addlisteners();
   }
 
+  // отрисовываем карточки
   renderCards() {
     document.querySelector('.cards-wrapper').textContent = '';
     this.currentData.forEach((item) => this.renderCard(item))
   }
 
-  processingData() {
-    this.currentData.forEach((item) => {
-      this.name.add(item.name);
-      if (item.gender) this.gender.add(item.gender.toLowerCase());
-      if (item.citizenship) this.citizenship.add(item.citizenship.toLowerCase());
-      this.status.add(item.status);
-      if (item.species) this.species.add(item.species);
-      if (item.movies) item.movies.map(item => this.movies.add(item));
-      this.renderCard(item);
+  // заполняем коллекцию значений фильтров
+  processingData(data, dataSelects) {
+    data.forEach((item) => {
+      dataSelects.name.add(item.name);
+      if (item.gender) dataSelects.gender.add(item.gender.toLowerCase());
+      if (item.citizenship) dataSelects.citizenship.add(item.citizenship.toLowerCase());
+      dataSelects.status.add(item.status);
+      if (item.species) dataSelects.species.add(item.species);
+      if (item.movies) item.movies.map(item => dataSelects.movies.add(item));
     })
   }
-
-  fillSelects() {
-    this.addOptions(this.name, '#name');
-    this.addOptions(this.gender, '#gender');
-    this.addOptions(this.citizenship, '#citizenship');
-    this.addOptions(this.status, '#status');
-    this.addOptions(this.species, '#species');
-    this.addOptions(this.movies, '#movies');
+  // вызов очистки и заполнения текущей коллекции
+  wipeAndFillCurrentSelects() {
+    for (let key in this.selects) {
+      this.wipeCurrentSelectCollection(key);
+    }
   }
+  // очищает и заполняет текущую коллекцию исходной
+  wipeCurrentSelectCollection(collection) {
+    this.currentSelects[collection].clear();
+    const arr = Array.from(this.selects[collection]);
+    this.currentSelects[collection] = new Set(arr);
+  }
+
+  // заполняем не установленные фильтры
+  fillSelects(selects) {
+    for (let key in this.filters) {
+      if (this.filters[key] === 'all') {
+        this.addOptions(selects[key], `#${key}`);
+      }
+    }
+  }
+  // заполняем селект опциями
   addOptions(data, selector) {
     const block = document.querySelector(selector),
       option = document.createElement('option');
@@ -95,7 +121,16 @@ class MarvelData {
       block.appendChild(clone);
     })
   }
+  // очищаем селект, оставляем дефолтное значение
+  clearOptions(selector) {
+    const block = document.querySelector(selector);
+    block.options.selectedIndex = 0;
+    for (let i = block.options.length - 1; i > 0; i--) {
+      block.options[i].remove();
+    }
+  }
 
+  // отрисовываем карточку
   renderCard(obj) {
     const wrapper = document.querySelector('.cards-wrapper');
     const card = document.createElement('div');
@@ -122,39 +157,77 @@ class MarvelData {
     }
     htmlString += '</ul>';
 
-
     card.insertAdjacentHTML('beforeend', htmlString);
   }
   addlisteners() {
-    const selects = document.querySelector('.selects');
+    const selects = document.querySelector('.selects'),
+      resetBtn = document.getElementById('reset');
     selects.addEventListener('change', event => {
       const target = event.target;
-      if (target.name !== 'movies' && target.value !== this.filters[target.name]) {
+      // установлен фильтр не по фильмам и фильтр ранее не применялся
+      if (target.name !== 'movies' && this.filters[target.name] === 'all') {
         this.applyFilter(target);
+        this.renderCards();
+      } else if (target.name === 'movies' && this.filters[target.name] === 'all') {
+        // установлен фильтр по фильмам, ранее он не применялся
+        this.applyFilterMovie(target);
+        this.renderCards();
       } else {
-        if (target.name === 'movies' && target.value !== this.filters[target.name]) {
-          this.applyFilterMovie(target)
-        } else {
-          // возвращаем исходные данные и применяем выбранные фильтры вновь
-
-        }
+        // фильтр ранее применялся - требуется вновь применить все фильтры
+        this.filters[target.name] = target.value;
+        this.applyAllFilters();
       }
-    })
+
+    });
+    resetBtn.addEventListener('click', this.reset.bind(this));
   }
+  // применяем новый фильтр (кроме фильмов)
   applyFilter(target) {
     this.currentData = this.currentData.filter(item => {
       if (!item[target.name]) return false;
       return item[target.name].toLowerCase() === target.value.toLowerCase()
     });
-    this.renderCards();
+    this.filters[target.name] = target.value;
   }
+  // применяем фильтр по фильмам
   applyFilterMovie(target) {
     this.currentData = this.currentData.filter(item => {
       if (!item[target.name]) return false;
       return item[target.name].includes(target.value);
     });
-    console.log(this.currentData);
+    this.filters.movies = target.value;
+  }
+
+  // вызов очистки всех селектов
+  clearSelects() {
+    for (let key in this.filters) {
+      this.clearOptions(`#${key}`)
+    }
+  }
+
+  // применяем все фильтры снова
+  applyAllFilters() {
+    this.wipeData();
+    for (let key in this.filters) {
+      if (this.filters[key] !== 'all') {
+        if (key !== 'movies') {
+          this.applyFilter(document.getElementById(key))
+        } else {
+          this.applyFilterMovie(document.getElementById('movies'))
+        }
+      }
+    }
     this.renderCards();
+  }
+
+  // сброс всех фильтров - возвращение в исходное состояние
+  reset() {
+    this.wipeData();
+    this.renderCards();
+    this.wipeFilters();
+    this.clearSelects()
+    this.wipeAndFillCurrentSelects();
+    this.fillSelects(this.currentSelects);
   }
 }
 

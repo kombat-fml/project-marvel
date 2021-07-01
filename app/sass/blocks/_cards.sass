@@ -3,6 +3,9 @@
   flex-wrap: wrap
   align-items: flex-start
   justify-content: flex-start
+  &:empty
+    &:after
+      content: 'Ничего не найдено'
 .card
   flex: 0 0 calc(100% / 4 - 30px)
   margin: 0 15px 30px

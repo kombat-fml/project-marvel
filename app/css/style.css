@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 /* Document
    ========================================================================== */
@@ -370,6 +371,9 @@ img {
       -ms-flex-pack: start;
           justify-content: flex-start;
 }
+.cards-wrapper:empty:after {
+  content: "Ничего не найдено";
+}
 
 .card {
   -webkit-box-flex: 0;
@@ -387,4 +391,8 @@ img {
      object-fit: cover;
   -o-object-position: top center;
      object-position: top center;
+}
+
+.filters-wrapper {
+  margin-bottom: 30px;
 }
