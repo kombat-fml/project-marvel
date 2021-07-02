@@ -231,5 +231,49 @@ class MarvelData {
   }
 }
 
-let marvelData = new MarvelData();
-marvelData.request();
+
+
+const video = document.querySelector('.preloader-video'),
+  preloader = document.querySelector('.preloader'),
+  volume = document.querySelector('.preloader-unmute');
+
+const startProgram = () => {
+  let marvelData = new MarvelData();
+  marvelData.request();
+  preloader.style.opacity = 0;
+  setTimeout(() => {
+    video.muted = true;
+    preloader.classList.add('hidden');
+  }, 800)
+}
+video.addEventListener('canplaythrough', ()=>{
+  video.setAttribute('autoplay', true);
+  let promise = video.play();
+  if (promise !== undefined) {
+    promise.then(_ => {
+      // Autoplay started!
+    }).catch(error => {
+      console.error(`Ошибка воспроизведения ${error}`)
+      // Autoplay was prevented.
+      // Show a "Play" button so that user can start playback.
+    });
+  }
+});
+video.addEventListener('ended', ()=>{
+  startProgram();
+})
+preloader.addEventListener('click', event => {
+  const target = event.target;
+  if (target === volume) {
+    video.muted = !video.muted;
+    volume.classList.toggle('unmuted');
+  } else {
+    startProgram();
+  }
+})
+document.querySelector('body').addEventListener('keydown', event => {
+  const target = event.key;
+  if (target === "Escape") {
+    startProgram();
+  };
+})
