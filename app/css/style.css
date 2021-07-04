@@ -345,6 +345,14 @@ template {
 *, *::before, *::after {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  cursor: url(../images/Gauntlet_Cursor.png), default;
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 24px;
 }
 
 .container {
@@ -358,12 +366,23 @@ img {
   max-width: 100%;
 }
 
-button {
-  cursor: pointer;
+button, select, a, input, label {
+  cursor: url(../images/Gauntlet_Pointer.png), pointer;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
 .preloader {
   position: fixed;
+  z-index: 100;
   left: 0;
   right: 0;
   top: 0;
@@ -382,7 +401,7 @@ button {
 }
 .preloader-unmute {
   position: absolute;
-  z-index: 3;
+  z-index: 103;
   right: 30px;
   top: 30px;
   width: 50px;
@@ -395,19 +414,29 @@ button {
   background: url(../images/volume.svg);
 }
 
+.actors {
+  min-height: 100vh;
+  padding: 40px 0;
+  background: url(../poster.jpg) center center/cover;
+  background-attachment: fixed;
+}
+
 .hidden {
   display: none;
 }
 
+@media (max-width: 992px) {
+  body {
+    font-size: 14px;
+    line-height: 21px;
+  }
+}
 .cards-wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  -webkit-box-align: start;
-      -ms-flex-align: start;
-          align-items: flex-start;
   -webkit-box-pack: start;
       -ms-flex-pack: start;
           justify-content: flex-start;
@@ -421,19 +450,260 @@ button {
       -ms-flex: 0 0 calc(100% / 4 - 30px);
           flex: 0 0 calc(100% / 4 - 30px);
   margin: 0 15px 30px;
+  min-height: 500px;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 8;
+  background-color: #fff;
 }
 .card:last-child {
   justify-self: flex-start;
 }
 .card img {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  top: 0;
   width: 100%;
-  height: 450px;
+  height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
   -o-object-position: top center;
      object-position: top center;
+  opacity: 1;
+  -webkit-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.card h3 {
+  margin: 0;
+  padding: 10px;
+  position: absolute;
+  z-index: 7;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 26px;
+  background-color: #292a85;
+  -webkit-transition: background-color 0.3s;
+  -o-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+}
+.card-info {
+  padding: 10px 10px 60px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -100%;
+  height: 100%;
+  z-index: 4;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  transition: all 0.4s;
+}
+.card li {
+  margin-bottom: 5px;
+}
+.card:hover * {
+  cursor: url(../images/Gauntlet_Pointer.png), pointer;
+}
+.card:hover img {
+  opacity: 0.2;
+  -webkit-transform: scale(1.05);
+      -ms-transform: scale(1.05);
+          transform: scale(1.05);
+}
+.card:hover h3 {
+  background-color: #542085;
+}
+.card:hover .card-info {
+  top: 0;
 }
 
+.movies-list li {
+  position: relative;
+  padding-left: 10px;
+}
+.movies-list li::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #292a85;
+  position: absolute;
+  left: 0;
+  top: 10px;
+}
+
+@media (max-width: 1200px) {
+  .card {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 calc(100% / 3 - 30px);
+            flex: 0 0 calc(100% / 3 - 30px);
+  }
+}
+@media (max-width: 992px) {
+  .card {
+    min-height: 350px;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 calc(100% / 3 - 30px);
+            flex: 0 0 calc(100% / 3 - 30px);
+  }
+  .card h3 {
+    font-size: 20px;
+  }
+}
 .filters-wrapper {
   margin-bottom: 30px;
+}
+
+.selects {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.search {
+  text-align: center;
+}
+
+.select-wrapper {
+  position: relative;
+  width: 320px;
+  height: 40px;
+  margin: 10px;
+}
+.select-wrapper[data-state=active] .select-title::before {
+  -webkit-transform: translate(-3px, -50%) rotate(-45deg);
+      -ms-transform: translate(-3px, -50%) rotate(-45deg);
+          transform: translate(-3px, -50%) rotate(-45deg);
+}
+.select-wrapper[data-state=active] .select-title::after {
+  -webkit-transform: translate(3px, -50%) rotate(45deg);
+      -ms-transform: translate(3px, -50%) rotate(45deg);
+          transform: translate(3px, -50%) rotate(45deg);
+}
+.select-wrapper[data-state=active] .select-content {
+  opacity: 1;
+}
+.select-wrapper[data-state=active] .select-label {
+  max-height: 64px;
+  border-top-width: 1px;
+}
+.select-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 8px 16px;
+  border-radius: 5px;
+  border: solid 1px #c7ccd1;
+  background-color: #fff;
+}
+.select-title::before, .select-title::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  display: block;
+  width: 10px;
+  height: 2px;
+  -webkit-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  background-color: #333333;
+  -webkit-transform: translate(-3px, -50%) rotate(45deg);
+      -ms-transform: translate(-3px, -50%) rotate(45deg);
+          transform: translate(-3px, -50%) rotate(45deg);
+}
+.select-title::after {
+  -webkit-transform: translate(3px, -50%) rotate(-45deg);
+      -ms-transform: translate(3px, -50%) rotate(-45deg);
+          transform: translate(3px, -50%) rotate(-45deg);
+}
+.select-title:hover {
+  border-color: #D8093A;
+  cursor: url(../images/Gauntlet_Pointer.png), pointer;
+}
+.select-title:hover::before, .select-title:hover::after {
+  background-color: #D8093A;
+}
+.select-scroll {
+  position: absolute;
+  top: 40px;
+  left: 3px;
+  width: calc(100% - 6px);
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  max-height: 350px;
+  overflow: auto;
+  z-index: 10;
+}
+.select-content {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-color: #ffffff;
+  border: 1px solid #c7ccd1;
+  border-top: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  opacity: 0;
+}
+.select-input {
+  display: none;
+}
+.select-input:checked + label {
+  background-color: #dedede;
+}
+.select-label {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  height: auto;
+  max-height: 0;
+  padding: 0 16px;
+  -webkit-transition: all 0.2s ease-out;
+  -o-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+  overflow: hidden;
+  line-height: 32px;
+}
+.select-label + input + .select-label {
+  border-top: 0 solid #C7CCD160;
+}
+.select-label:hover {
+  background-color: #D8093A !important;
+  color: #ffffff;
+}
+
+@media (max-width: 992px) {
+  .select-wrapper {
+    width: 300px;
+  }
 }

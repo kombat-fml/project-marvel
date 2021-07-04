@@ -1,7 +1,6 @@
 .cards-wrapper
   display: flex
   flex-wrap: wrap
-  align-items: flex-start
   justify-content: flex-start
   &:empty
     &:after
@@ -9,10 +8,79 @@
 .card
   flex: 0 0 calc(100% / 4 - 30px)
   margin: 0 15px 30px
+  min-height: 500px
+  position: relative
+  border-radius: 10px
+  overflow: hidden
+  z-index: 8
+  background-color: #fff
   &:last-child
     justify-self: flex-start
   img
+    position: absolute
+    z-index: 5
+    left: 0
+    top: 0
     width: 100%
-    height: 450px
+    height: 100%
     object-fit: cover
     object-position: top center
+    opacity: 1
+    transition: all 0.3s
+    // display: none
+  h3
+    margin: 0
+    padding: 10px
+    position: absolute
+    z-index: 7
+    bottom: 0
+    width: 100%
+    text-align: center
+    color: #fff
+    font-size: 26px
+    background-color: #292a85
+    transition: background-color 0.3s
+  &-info
+    padding: 10px 10px 60px
+    position: absolute
+    left: 0
+    right: 0
+    top: -100%
+    height: 100%
+    z-index: 4
+    transition: all 0.4s
+  li
+    margin-bottom: 5px
+  &:hover
+    *
+      cursor: url(../images/Gauntlet_Pointer.png), pointer
+    img
+      opacity: 0.2
+      transform: scale(1.05)
+    h3
+      background-color: #542085
+    .card-info
+      top: 0
+.movies-list
+  li
+    position: relative
+    padding-left: 10px
+    &::before
+      content: ''
+      width: 4px
+      height: 4px
+      border-radius: 50%
+      background-color: #292a85
+      position: absolute
+      left: 0
+      top: 10px
+
+@media ( max-width: 1200px )
+  .card
+    flex: 0 0 calc(100% / 3 - 30px)
+@media ( max-width: 992px )
+  .card
+    min-height: 350px
+    flex: 0 0 calc(100% / 3 - 30px)
+    h3
+      font-size: 20px

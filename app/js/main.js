@@ -102,14 +102,37 @@ class MarvelData {
     this.currentSelects[collection] = new Set(arr);
   }
 
-  // заполняем не установленные фильтры
+  //  вызов заполнения неустановленных фильтров
   fillSelects(selects) {
     for (let key in this.filters) {
       if (this.filters[key] === 'all') {
-        this.addOptions(selects[key], `#${key}`);
+        this.addInputs(selects[key], key);
       }
     }
   }
+
+  // заполнение фильтров
+  addInputs(data, id) {
+    const block = document.querySelector(`#${id}`),
+      input = document.createElement('input'),
+      label = document.createElement('label');
+    // console.log(block);
+    input.classList.add('select-input');
+    input.setAttribute('type', 'radio');
+    input.setAttribute('name', id);
+    label.classList.add('select-label');
+    data.forEach(item => {
+      const cloneInput = input.cloneNode(),
+        cloneLabel = label.cloneNode();
+      cloneInput.value = item;
+      cloneLabel.textContent = item;
+      cloneInput.setAttribute('id', `${id}_${item}`);
+      cloneLabel.setAttribute('for', `${id}_${item}`);
+      block.appendChild(cloneInput);
+      block.appendChild(cloneLabel);
+    })
+  }
+
   // заполняем селект опциями
   addOptions(data, selector) {
     const block = document.querySelector(selector),
@@ -122,11 +145,15 @@ class MarvelData {
     })
   }
   // очищаем селект, оставляем дефолтное значение
-  clearOptions(selector) {
-    const block = document.querySelector(selector);
-    block.options.selectedIndex = 0;
-    for (let i = block.options.length - 1; i > 0; i--) {
-      block.options[i].remove();
+  clearOptions(id) {
+    const block = document.querySelector(`#${id}`);
+    const parent = block.parentNode,
+      title = parent.querySelector('.select-title'),
+      mainLabel = block.querySelectorAll('.select-label')[0];
+    title.textContent = mainLabel.textContent;
+    parent.setAttribute('data-state', '');
+    for (let i = block.children.length - 1; i > 1; i--) {
+      block.children[i].remove();
     }
   }
 
@@ -138,18 +165,18 @@ class MarvelData {
     card.className = "card";
     wrapper.appendChild(card);
     htmlString = `<img src="images/${obj.photo}" alt="${obj.name}">
-      <ul><li><h3>${obj.name}</h3></li>`;
-    if (obj.realName) htmlString += `<li>Имя: ${obj.realName}</li>`;
-    htmlString += `<li>Пол: ${obj.gender}</li>`;
-    if (obj.species) htmlString += `<li>Раса: ${obj.species}</li>`;
-    if (obj.citizenship) htmlString += `<li>Гражданство: ${obj.citizenship}</li>`;
-    if (obj.birthDay) htmlString += `<li>Год рождения: ${obj.birthDay}</li>`;
-    htmlString += `<li>Статус: ${obj.status} `;
+      <h3>${obj.name}</h3><ul class="card-info">`;
+    if (obj.realName) htmlString += `<li><b>Name:</b> ${obj.realName}</li>`;
+    htmlString += `<li><b>Gender:</b> ${obj.gender}</li>`;
+    if (obj.species) htmlString += `<li><b>Race:</b> ${obj.species}</li>`;
+    if (obj.citizenship) htmlString += `<li><b>Citizenship:</b> ${obj.citizenship}</li>`;
+    if (obj.birthDay) htmlString += `<li><b>Born:</b> ${obj.birthDay}</li>`;
+    htmlString += `<li><b>Status:</b> ${obj.status} `;
     if (obj.deathDay) htmlString += `(${obj.deathDay})`;
     htmlString += '</li>';
-    htmlString += `<li>${obj.gender === 'male' ? 'Актер' : 'Актриса'}: ${obj.actors}</li>`;
+    htmlString += `<li><b>${obj.gender === 'male' ? 'Actor' : 'Actress'}:</b> ${obj.actors}</li>`;
     if (obj.movies) {
-      htmlString += `<li>Фильмы: <ul>`;
+      htmlString += `<li><b>Movies:</b></li> <li><ul class='movies-list'>`;
       obj.movies.forEach(item => {
         htmlString += `<li>${item}</li>`
       })
@@ -162,46 +189,74 @@ class MarvelData {
   addlisteners() {
     const selects = document.querySelector('.selects'),
       resetBtn = document.getElementById('reset');
-    selects.addEventListener('change', event => {
-      const target = event.target;
+    selects.addEventListener('click', this.clickInSelects);
+    selects.addEventListener('change', this.changeFilters.bind(this));
+    resetBtn.addEventListener('click', this.reset.bind(this));
+    document.querySelector('body').addEventListener('click', this.bodyToSelects);
+  }
+
+  // событие изменения фильтра
+  changeFilters(event) {
+    const target = event.target;
       // установлен фильтр не по фильмам и фильтр ранее не применялся
       if (target.name !== 'movies' && this.filters[target.name] === 'all') {
-        this.applyFilter(target);
+        this.applyFilter(target.name);
         this.renderCards();
       } else if (target.name === 'movies' && this.filters[target.name] === 'all') {
         // установлен фильтр по фильмам, ранее он не применялся
-        this.applyFilterMovie(target);
+        this.applyFilterMovie();
         this.renderCards();
       } else {
         // фильтр ранее применялся - требуется вновь применить все фильтры
         this.filters[target.name] = target.value;
         this.applyAllFilters();
       }
-
+  }
+  bodyToSelects(event) {
+    const wrappers = document.querySelectorAll('.select-wrapper'),
+      target = event.target,
+      closestWrapper = target.closest('.select-wrapper');
+    if (closestWrapper) {
+      closestWrapper.getAttribute('data-state') === 'active' ? closestWrapper.setAttribute('data-state', '') : closestWrapper.setAttribute('data-state', 'active')
+    }
+    wrappers.forEach(item => {
+      if (item !== target.parentNode) item.setAttribute('data-state', '')
     });
-    resetBtn.addEventListener('click', this.reset.bind(this));
+  }
+
+  // смена заголовка в выбранном селекте
+  clickInSelects(event) {
+    const target = event.target;
+    if (target.classList.contains('select-label')) {
+      const title = target.closest('.select-wrapper').children[0];
+      title.textContent = target.textContent;
+    }
   }
   // применяем новый фильтр (кроме фильмов)
-  applyFilter(target) {
+  applyFilter(id) {
+    const selectWrapper = document.getElementById(id).closest('.select-wrapper'),
+      selectTitle = selectWrapper.children[0].textContent;
     this.currentData = this.currentData.filter(item => {
-      if (!item[target.name]) return false;
-      return item[target.name].toLowerCase() === target.value.toLowerCase()
+      if (!item[id]) return false;
+      return item[id].toLowerCase() === selectTitle.toLowerCase()
     });
-    this.filters[target.name] = target.value;
+    this.filters[id] = selectTitle;
   }
   // применяем фильтр по фильмам
-  applyFilterMovie(target) {
+  applyFilterMovie() {
+    const selectWrapper = document.getElementById('movies').closest('.select-wrapper'),
+      selectTitle = selectWrapper.children[0].textContent;
     this.currentData = this.currentData.filter(item => {
-      if (!item[target.name]) return false;
-      return item[target.name].includes(target.value);
+      if (!item['movies']) return false;
+      return item['movies'].includes(selectTitle);
     });
-    this.filters.movies = target.value;
+    this.filters.movies = selectTitle;
   }
 
   // вызов очистки всех селектов
   clearSelects() {
     for (let key in this.filters) {
-      this.clearOptions(`#${key}`)
+      this.clearOptions(key)
     }
   }
 
@@ -211,9 +266,9 @@ class MarvelData {
     for (let key in this.filters) {
       if (this.filters[key] !== 'all') {
         if (key !== 'movies') {
-          this.applyFilter(document.getElementById(key))
+          this.applyFilter(key)
         } else {
-          this.applyFilterMovie(document.getElementById('movies'))
+          this.applyFilterMovie()
         }
       }
     }
@@ -237,7 +292,7 @@ const video = document.querySelector('.preloader-video'),
   preloader = document.querySelector('.preloader'),
   volume = document.querySelector('.preloader-unmute');
 
-const startProgram = () => {
+const startFunction = () => {
   let marvelData = new MarvelData();
   marvelData.request();
   preloader.style.opacity = 0;
@@ -246,7 +301,15 @@ const startProgram = () => {
     preloader.classList.add('hidden');
   }, 800)
 }
-video.addEventListener('canplaythrough', ()=>{
+const once = fn => () => {
+  if (!fn) return;
+  const res = fn();
+  fn = null;
+  return res;
+}
+const startProgram = once(startFunction);
+
+video.addEventListener('canplaythrough', () => {
   video.setAttribute('autoplay', true);
   let promise = video.play();
   if (promise !== undefined) {
@@ -254,13 +317,12 @@ video.addEventListener('canplaythrough', ()=>{
       // Autoplay started!
     }).catch(error => {
       console.error(`Ошибка воспроизведения ${error}`)
-      // Autoplay was prevented.
-      // Show a "Play" button so that user can start playback.
     });
   }
 });
-video.addEventListener('ended', ()=>{
-  startProgram();
+
+video.addEventListener('ended', () => {
+  if (!preloader.classList.contains('hidden')) startProgram();
 })
 preloader.addEventListener('click', event => {
   const target = event.target;
@@ -270,10 +332,11 @@ preloader.addEventListener('click', event => {
   } else {
     startProgram();
   }
-})
+});
 document.querySelector('body').addEventListener('keydown', event => {
-  const target = event.key;
-  if (target === "Escape") {
+  const key = event.key;
+  if (key === "Escape" && !preloader.classList.contains('hidden')) {
     startProgram();
-  };
-})
+  }
+});
+

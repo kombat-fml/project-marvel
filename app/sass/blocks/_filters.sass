@@ -1,2 +1,99 @@
 .filters-wrapper
   margin-bottom: 30px
+.selects
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  justify-content: center
+.search
+  text-align: center
+.select
+  &-wrapper
+    position: relative
+    width: 320px
+    height: 40px
+    margin: 10px
+    &[data-state="active"]
+      .select-title
+        &::before
+          transform: translate(-3px, -50%) rotate(-45deg)
+        &::after
+          transform: translate(3px, -50%) rotate(45deg)
+      .select-content
+        opacity: 1
+      .select-label
+        max-height: 64px
+        border-top-width: 1px
+  &-title
+    display: flex
+    align-items: center
+    width: 100%
+    height: 100%
+    padding: 8px 16px
+    border-radius: 5px
+    border: solid 1px #c7ccd1
+    background-color: #fff
+    &::before,
+    &::after
+      content: ""
+      position: absolute
+      top: 50%
+      right: 16px
+      display: block
+      width: 10px
+      height: 2px
+      transition: all 0.3s ease-out
+      background-color: #333333
+      transform: translate(-3px, -50%) rotate(45deg)
+    &::after
+      transform: translate(3px, -50%) rotate(-45deg)
+    &:hover
+      border-color: #D8093A
+      cursor: url(../images/Gauntlet_Pointer.png), pointer
+      &::before,
+      &::after
+        background-color: #D8093A
+  &-scroll
+    position: absolute
+    top: 40px
+    left: 3px
+    width: calc(100% - 6px)
+    border-bottom-left-radius: 5px
+    border-bottom-right-radius: 5px
+    max-height: 350px
+    overflow: auto
+    z-index: 10
+  &-content
+    border-bottom-left-radius: 5px
+    border-bottom-right-radius: 5px
+    background-color: #ffffff
+    border: 1px solid #c7ccd1
+    border-top: none
+    display: flex
+    flex-direction: column
+    transition: all 0.3s ease-out
+    opacity: 0
+  &-input
+    display: none
+    &:checked + label
+      background-color: #dedede
+  &-label
+    display: flex
+    align-items: center
+    width: 100%
+    height: auto
+    max-height: 0
+    padding: 0 16px
+    transition: all 0.2s ease-out
+    overflow: hidden
+    line-height: 32px
+    & + input + &
+      border-top: 0 solid #C7CCD160
+    &:hover
+      background-color: #D8093A !important
+      color: #ffffff
+
+@media ( max-width: 992px )
+  .select
+    &-wrapper
+      width: 300px

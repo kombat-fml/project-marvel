@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,6 +9,9 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" href="css/style.css" />
   <script src="js/main.js" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -19,32 +23,88 @@
       <source src="opening.mp4" type="video/mp4">
     </video>
   </div>
-  <header></header>
   <section class="actors">
     <div class="container">
       <div class="filters-wrapper">
         <div class="selects">
-          <select name="name" id="name">
+          <div class="select-wrapper" data-state="">
+            <div class="select-title" data-default="All heroes">All heroes</div>
+            <div class="select-scroll">
+              <div class="select-content" id="name">
+                <input name="name" id="name_all" class="select-input" type="radio" value="all" checked />
+                <label for="name_all" class="select-label">All heroes</label>
+              </div>
+            </div>
+          </div>
+          <div class="select-wrapper" data-state="">
+            <div class="select-title" data-default="Any gender">Any gender</div>
+            <div class="select-scroll">
+              <div class="select-content" id="gender">
+                <input name="gender" id="gender_all" class="select-input" type="radio" value="all" checked />
+                <label for="gender_all" class="select-label">Any gender</label>
+              </div>
+            </div>
+          </div>
+          <div class="select-wrapper" data-state="">
+            <div class="select-title" data-default="Any citizenship">Any citizenship</div>
+            <div class="select-scroll">
+              <div class="select-content" id="citizenship">
+                <input name="citizenship" id="citizenship_all" class="select-input" type="radio" value="all" checked />
+                <label for="citizenship_all" class="select-label">Any citizenship</label>
+              </div>
+            </div>
+          </div>
+          <div class="select-wrapper" data-state="">
+            <div class="select-title" data-default="Any species">Any species</div>
+            <div class="select-scroll">
+              <div class="select-content" id="species">
+                <input name="species" id="species_all" class="select-input" type="radio" value="all" checked />
+                <label for="species_all" class="select-label">Any species</label>
+              </div>
+            </div>
+          </div>
+          <div class="select-wrapper" data-state="">
+            <div class="select-title" data-default="Any status">Any status</div>
+            <div class="select-scroll">
+              <div class="select-content" id="status">
+                <input name="status" id="status_all" class="select-input" type="radio" value="all" checked />
+                <label for="status_all" class="select-label">Any status</label>
+              </div>
+            </div>
+          </div>
+          <div class="select-wrapper" data-state="">
+            <div class="select-title" data-default="Any movies">Any movies</div>
+            <div class="select-scroll">
+              <div class="select-content" id="movies">
+                <input name="movies" id="movies_all" class="select-input" type="radio" value="all" checked />
+                <label for="movies_all" class="select-label">Any movies</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- <select name="name" id="name">
             <option value="all">Все герои</option>
-          </select>
-          <select name="gender" id="gender">
+          </select> -->
+          <!-- <select name="gender" id="gender">
             <option value="all">Любой пол</option>
-          </select>
-          <select name="citizenship" id="citizenship">
+          </select> -->
+          <!-- <select name="citizenship" id="citizenship">
             <option value="all">Любое гражданство</option>
-          </select>
-          <select name="species" id="species">
+          </select> -->
+          <!-- <select name="species" id="species">
             <option value="all">Любая раса</option>
-          </select>
-          <select name="status" id="status">
+          </select> -->
+          <!-- <select name="status" id="status">
             <option value="all">Любой статус</option>
-          </select>
-          <select name="movies" id="movies">
+          </select> -->
+          <!-- <select name="movies" id="movies">
             <option value="all">Любой фильм</option>
-          </select>
+          </select> -->
         </div>
-        <input type="text" id="inputText" placeholder="Начните ввод">
-        <button id="reset">Сбросить фильтры</button>
+        <div class="search">
+          <input type="text" id="inputText" placeholder="Начните ввод">
+          <button id="reset">Сбросить фильтры</button>
+        </div>
       </div>
       <!-- /.filters-wrapper -->
       <div class="cards-wrapper">

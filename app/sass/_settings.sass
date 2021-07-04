@@ -1,5 +1,12 @@
 *, *::before, *::after
   box-sizing: border-box
+  cursor: url(../images/Gauntlet_Cursor.png), default
+
+body
+  font-family: 'Open Sans', sans-serif
+  font-weight: normal
+  font-size: 16px
+  line-height: 24px
 
 .container
   max-width: 1400px
@@ -10,11 +17,21 @@ img
   display: block
   max-width: 100%
 
-button
-  cursor: pointer
+button, select, a, input, label
+  cursor: url(../images/Gauntlet_Pointer.png), pointer
+
+
+h1, h2, h3
+  font-weight: 700
+
+ul
+  list-style-type: none
+  margin: 0
+  padding: 0
 
 .preloader
   position: fixed
+  z-index: 100
   left: 0
   right: 0
   top: 0
@@ -28,7 +45,7 @@ button
     object-fit: cover
   &-unmute
     position: absolute
-    z-index: 3
+    z-index: 103
     right: 30px
     top: 30px
     width: 50px
@@ -38,6 +55,15 @@ button
     border: none
     &.unmuted
       background: url(../images/volume.svg)
-
+.actors
+  min-height: 100vh
+  padding: 40px 0
+  background: url(../poster.jpg) center center / cover
+  background-attachment: fixed
 .hidden
   display: none
+
+@media ( max-width: 992px )
+  body
+    font-size: 14px
+    line-height: 21px
