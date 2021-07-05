@@ -44,6 +44,8 @@ class MarvelData {
       movies: new Set(),
       species: new Set(),
     }
+    this.imageDataArray = [];
+    this.canvasCount = 25;
   }
   // обнуляем установленные фильтры
   wipeFilters() {
@@ -116,7 +118,7 @@ class MarvelData {
     const block = document.querySelector(`#${id}`),
       input = document.createElement('input'),
       label = document.createElement('label');
-    // console.log(block);
+
     input.classList.add('select-input');
     input.setAttribute('type', 'radio');
     input.setAttribute('name', id);
@@ -137,24 +139,13 @@ class MarvelData {
   addOptions(data, selector) {
     const block = document.querySelector(selector),
       option = document.createElement('option');
+
     data.forEach(item => {
       const clone = option.cloneNode();
       clone.value = item;
       clone.textContent = item;
       block.appendChild(clone);
     })
-  }
-  // очищаем селект, оставляем дефолтное значение
-  clearOptions(id) {
-    const block = document.querySelector(`#${id}`);
-    const parent = block.parentNode,
-      title = parent.querySelector('.select-title'),
-      mainLabel = block.querySelectorAll('.select-label')[0];
-    title.textContent = mainLabel.textContent;
-    parent.setAttribute('data-state', '');
-    for (let i = block.children.length - 1; i > 1; i--) {
-      block.children[i].remove();
-    }
   }
 
   // отрисовываем карточку
@@ -191,27 +182,36 @@ class MarvelData {
       resetBtn = document.getElementById('reset');
     selects.addEventListener('click', this.clickInSelects);
     selects.addEventListener('change', this.changeFilters.bind(this));
-    resetBtn.addEventListener('click', this.reset.bind(this));
+    resetBtn.addEventListener('click', () => {
+      resetBtn.disabled = true;
+      this.reset();
+      setTimeout(() => {
+        resetBtn.disabled = false;
+      }, 2000);
+    });
     document.querySelector('body').addEventListener('click', this.bodyToSelects);
   }
 
   // событие изменения фильтра
   changeFilters(event) {
     const target = event.target;
-      // установлен фильтр не по фильмам и фильтр ранее не применялся
-      if (target.name !== 'movies' && this.filters[target.name] === 'all') {
-        this.applyFilter(target.name);
-        this.renderCards();
-      } else if (target.name === 'movies' && this.filters[target.name] === 'all') {
-        // установлен фильтр по фильмам, ранее он не применялся
-        this.applyFilterMovie();
-        this.renderCards();
-      } else {
-        // фильтр ранее применялся - требуется вновь применить все фильтры
-        this.filters[target.name] = target.value;
-        this.applyAllFilters();
-      }
+    // установлен фильтр не по фильмам и фильтр ранее не применялся
+    if (target.name !== 'movies' && this.filters[target.name] === 'all') {
+      this.applyFilter(target.name);
+    } else if (target.name === 'movies' && this.filters[target.name] === 'all') {
+      // установлен фильтр по фильмам, ранее он не применялся
+      this.applyFilterMovie();
+    } else {
+      // фильтр ранее применялся - требуется вновь применить все фильтры
+      this.filters[target.name] = target.value;
+      this.applyAllFilters();
+    }
+    // меняем постер при смене фильтра с фильмами
+    if (target.name === 'movies') this.changePoster();
+    this.renderCards();
   }
+
+  // закрытие селектов при различных кликах
   bodyToSelects(event) {
     const wrappers = document.querySelectorAll('.select-wrapper'),
       target = event.target,
@@ -253,13 +253,6 @@ class MarvelData {
     this.filters.movies = selectTitle;
   }
 
-  // вызов очистки всех селектов
-  clearSelects() {
-    for (let key in this.filters) {
-      this.clearOptions(key)
-    }
-  }
-
   // применяем все фильтры снова
   applyAllFilters() {
     this.wipeData();
@@ -272,7 +265,27 @@ class MarvelData {
         }
       }
     }
-    this.renderCards();
+  }
+
+  // вызов очистки всех селектов
+  clearSelects() {
+    for (let key in this.filters) {
+      this.clearOptions(key)
+    }
+  }
+
+  // очищаем селект, оставляем дефолтное значение
+  clearOptions(id) {
+    const block = document.querySelector(`#${id}`),
+      parent = block.closest('.select-wrapper'),
+      title = parent.querySelector('.select-title'),
+      mainLabel = block.querySelectorAll('.select-label')[0];
+
+    title.textContent = mainLabel.textContent;
+    parent.setAttribute('data-state', '');
+    for (let i = block.children.length - 1; i > 1; i--) {
+      block.children[i].remove();
+    }
   }
 
   // сброс всех фильтров - возвращение в исходное состояние
@@ -283,6 +296,18 @@ class MarvelData {
     this.clearSelects()
     this.wipeAndFillCurrentSelects();
     this.fillSelects(this.currentSelects);
+  }
+
+  // смена фонового изображения при выборе фильма
+  changePoster() {
+    const block = document.querySelector('.actors'),
+      movie = this.filters.movies;
+    if (movie !== 'all') {
+      let str = movie.replace(/[ :]*/g, '').toLowerCase();
+      block.style.backgroundImage = `url(images/films-posters/${str}.jpg)`;
+    } else {
+      block.style.backgroundImage = "";
+    }
   }
 }
 
@@ -324,6 +349,7 @@ video.addEventListener('canplaythrough', () => {
 video.addEventListener('ended', () => {
   if (!preloader.classList.contains('hidden')) startProgram();
 })
+
 preloader.addEventListener('click', event => {
   const target = event.target;
   if (target === volume) {
@@ -339,4 +365,3 @@ document.querySelector('body').addEventListener('keydown', event => {
     startProgram();
   }
 });
-
