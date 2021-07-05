@@ -5,10 +5,17 @@
   &:empty
     &:after
       content: 'Ничего не найдено'
+      margin: auto
+      font-size: 20px
+      font-weight: bold
+      color: red
+      background-color: #fff
+      border-radius: 5px
+      padding: 5px 10px
 .card
   flex: 0 0 calc(100% / 4 - 30px)
   margin: 0 15px 30px
-  min-height: 500px
+  min-height: 520px
   position: relative
   border-radius: 10px
   overflow: hidden
@@ -39,7 +46,7 @@
     color: #fff
     font-size: 26px
     background-color: #292a85
-    transition: background-color 0.3s
+    transition: all 0.3s
   &-info
     padding: 10px 10px 60px
     position: absolute
@@ -80,7 +87,21 @@
     flex: 0 0 calc(100% / 3 - 30px)
 @media ( max-width: 992px )
   .card
-    min-height: 350px
-    flex: 0 0 calc(100% / 3 - 30px)
+    min-height: 420px
+    margin: 0 10px 20px
+    flex: 0 0 calc(100% / 3 - 20px)
     h3
       font-size: 20px
+    li
+      margin-bottom: 0
+    &:hover
+      h3
+        bottom: -100%
+@media ( max-width: 768px )
+  .card
+    flex-basis: calc(100% / 2 - 20px)
+@media ( max-width: 576px )
+  .card
+    min-height: 420px
+    margin: 0 0 20px
+    flex-basis: 100%

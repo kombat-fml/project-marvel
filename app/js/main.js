@@ -44,8 +44,7 @@ class MarvelData {
       movies: new Set(),
       species: new Set(),
     }
-    this.imageDataArray = [];
-    this.canvasCount = 25;
+    this.lastCall = null;
   }
   // обнуляем установленные фильтры
   wipeFilters() {
@@ -70,7 +69,7 @@ class MarvelData {
     this.renderCards();
     this.processingData(this.currentData, this.selects);
     this.wipeAndFillCurrentSelects();
-    this.fillSelects(this.currentSelects);
+    this.fillFilters(this.currentSelects);
     this.addlisteners();
   }
 
@@ -105,7 +104,7 @@ class MarvelData {
   }
 
   //  вызов заполнения неустановленных фильтров
-  fillSelects(selects) {
+  fillFilters(selects) {
     for (let key in this.filters) {
       if (this.filters[key] === 'all') {
         this.addInputs(selects[key], key);
@@ -179,7 +178,8 @@ class MarvelData {
   }
   addlisteners() {
     const selects = document.querySelector('.selects'),
-      resetBtn = document.getElementById('reset');
+      resetBtn = document.getElementById('reset'),
+      inputText = document.getElementById('inputText');
     selects.addEventListener('click', this.clickInSelects);
     selects.addEventListener('change', this.changeFilters.bind(this));
     resetBtn.addEventListener('click', () => {
@@ -190,11 +190,23 @@ class MarvelData {
       }, 2000);
     });
     document.querySelector('body').addEventListener('click', this.bodyToSelects);
+    inputText.addEventListener('input', this.debounce.bind(this)());
+  }
+  debounce(time = 300) {
+    return () => {
+      let previousCall = this.lastCall;
+      this.lastCall = Date.now();
+      if (previousCall && this.lastCall - previousCall <= time) {
+        clearTimeout(this.lastCallTimer);
+      }
+      this.lastCallTimer = setTimeout(() => this.applyFilterByInput(inputText.value.toLowerCase().trim()), time);
+    }
   }
 
   // событие изменения фильтра
   changeFilters(event) {
-    const target = event.target;
+    const target = event.target,
+      inputValue = document.getElementById('inputText').value.trim();
     // установлен фильтр не по фильмам и фильтр ранее не применялся
     if (target.name !== 'movies' && this.filters[target.name] === 'all') {
       this.applyFilter(target.name);
@@ -205,6 +217,7 @@ class MarvelData {
       // фильтр ранее применялся - требуется вновь применить все фильтры
       this.filters[target.name] = target.value;
       this.applyAllFilters();
+      if (inputValue) this.applyFilterByInput(inputValue.toLowerCase());
     }
     // меняем постер при смене фильтра с фильмами
     if (target.name === 'movies') this.changePoster();
@@ -267,8 +280,31 @@ class MarvelData {
     }
   }
 
-  // вызов очистки всех селектов
-  clearSelects() {
+  // фильтрация по вводу
+  applyFilterByInput(value) {
+    this.applyAllFilters();
+    this.currentData = this.currentData.filter(item => {
+      for (let key in item) {
+        if (key !== 'photo') {
+          if (key !== 'movies') {
+            if (item[key].toLowerCase().indexOf(value) !== -1) {
+              return true;
+            }
+          } else {
+            const string = [...item[key]].join();
+            if (string.toLowerCase().indexOf(value) !== -1) {
+              return true;
+            }
+          }
+        }
+      }
+    });
+    this.renderCards();
+  }
+
+  // вызов очистки всех фильтров
+  clearFilters() {
+    document.getElementById('inputText').value = '';
     for (let key in this.filters) {
       this.clearOptions(key)
     }
@@ -293,10 +329,12 @@ class MarvelData {
     this.wipeData();
     this.renderCards();
     this.wipeFilters();
-    this.clearSelects()
+    this.clearFilters();
     this.wipeAndFillCurrentSelects();
-    this.fillSelects(this.currentSelects);
+    this.fillFilters(this.currentSelects);
+    this.changePoster();
   }
+
 
   // смена фонового изображения при выборе фильма
   changePoster() {

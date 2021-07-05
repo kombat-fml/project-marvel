@@ -6,7 +6,10 @@
   align-items: center
   justify-content: center
 .search
-  text-align: center
+  align-items: center
+  justify-content: center
+  display: flex
+  margin: auto
 .select
   &-wrapper
     position: relative
@@ -92,8 +95,28 @@
     &:hover
       background-color: #D8093A !important
       color: #ffffff
-
+#inputText, #reset
+  max-width: 320px
+  border: solid 1px #c7ccd1
+  background-color: #fff
+  border-radius: 5px
+  padding: 7px 16px
+  line-height: 24px
+  margin: 10px
+  flex-basis: 100%
+#inputText:hover
+  border-color: #D8093A
+#reset
+  font-weight: bold
+  &:hover
+    background-color: #D8093A !important
+    color: #ffffff
 @media ( max-width: 992px )
   .select
     &-wrapper
       width: 300px
+  #inputText, #reset
+    max-width: 300px
+@media ( max-width: 576px )
+  .search
+    flex-wrap: wrap
