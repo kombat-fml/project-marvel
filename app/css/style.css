@@ -462,7 +462,7 @@ ul {
           justify-content: flex-start;
 }
 .cards-wrapper:empty:after {
-  content: "Ничего не найдено";
+  content: "Not found";
   margin: auto;
   font-size: 20px;
   font-weight: bold;
