@@ -1,23 +1,28 @@
 {
-  "name": "gulp-start",
+  "name": "project-marvel",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Study project: Heroes Marvel",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "webpack --watch",
+    "build": "webpack --config webpack.prod.config.js",
+    "dev": "webpack serve --config webpack.dev.config.js"
   },
-  "author": "Anton Shakhov",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kombat-fml/project-marvel.git"
+  },
+  "author": "Shakhov Anton",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kombat-fml/project-marvel/issues"
+  },
+  "homepage": "https://github.com/kombat-fml/project-marvel#readme",
   "devDependencies": {
-    "browser-sync": "^2.26.13",
-    "del": "^6.0.0",
-    "gulp": "^4.0.2",
-    "gulp-autoprefixer": "^7.0.1",
-    "gulp-concat": "^2.6.1",
-    "gulp-imagemin": "^7.1.0",
-    "gulp-sass": "^5.0.0",
-    "gulp-uglify-es": "^2.0.0",
-    "jquery": "^3.5.1",
-    "sass": "^1.35.1"
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "babel-loader": "^8.2.2",
+    "webpack": "^5.41.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
   }
 }
